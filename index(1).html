@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Nous Deux</title>
+<meta name="theme-color" content="#fff7fa">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Nous Deux">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--pink:#ff6b8b;--pink2:#ffe3ea;--lil:#8b7cf6;--ink:#2b2340;--mute:#8a80a3;--card:#fff;--bg:#fff7fa}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:Fredoka,system-ui,sans-serif}
+#app{max-width:480px;margin:0 auto;min-height:100vh;padding:calc(env(safe-area-inset-top) + 10px) 16px calc(env(safe-area-inset-bottom) + 90px)}
+header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+h1{font-size:24px;margin:0;color:var(--pink)}
+.pill{background:#fff;border-radius:999px;padding:6px 12px;font-weight:600;box-shadow:0 2px 8px #ff6b8b22}
+.card{background:var(--card);border-radius:22px;padding:16px;box-shadow:0 4px 18px #8b7cf61a;margin-bottom:14px}
+#stage{position:relative;border-radius:26px;overflow:hidden;box-shadow:0 4px 18px #8b7cf622}
+#stage svg{display:block;width:100%;height:auto}
+.bob{animation:bob 2.6s ease-in-out infinite;transform-origin:100px 215px}
+@keyframes bob{50%{transform:translateY(-4px) scale(1.01,.99)}}
+#bubble{position:absolute;left:12px;right:12px;top:10px;background:#fffffff0;border-radius:16px;padding:8px 12px;font-size:14px;text-align:center}
+#bubble:empty{display:none}
+.fx{position:absolute;font-size:28px;pointer-events:none;animation:up 1.2s ease-out forwards}
+@keyframes up{to{transform:translateY(-120px) scale(1.4);opacity:0}}
+h2{text-align:center;margin:12px 0 2px;font-size:22px}
+.sub{text-align:center;color:var(--mute);font-size:13px;margin-bottom:12px;min-height:16px}
+.bar{display:grid;grid-template-columns:90px 1fr 34px;align-items:center;gap:8px;margin:8px 0;font-size:14px}
+.track{height:12px;background:#f1edf9;border-radius:99px;overflow:hidden}
+.fill{height:100%;border-radius:99px;transition:width .4s}
+.btns{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+button{font:inherit;border:0;border-radius:16px;padding:12px 8px;font-weight:600;cursor:pointer;background:var(--pink2);color:var(--ink)}
+button.main{background:var(--pink);color:#fff}
+button:disabled{opacity:.45;cursor:default}
+.btns button{font-size:15px;display:flex;flex-direction:column;align-items:center;gap:2px}
+.btns button span{font-size:26px}
+input,textarea{font:inherit;width:100%;border:2px solid #efe8fb;border-radius:14px;padding:10px 12px;background:#fff;color:var(--ink)}
+input:focus,textarea:focus{outline:none;border-color:var(--lil)}
+.row{display:flex;gap:8px}
+.row input{flex:1}
+.q{font-size:20px;font-weight:600;line-height:1.3;margin:6px 0 12px}
+.lbl{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--mute);font-weight:600}
+.ans{background:#faf7ff;border-radius:14px;padding:10px 12px;margin:6px 0 10px;white-space:pre-wrap}
+.lock{color:var(--mute);font-style:italic}
+.hist .item{border-top:1px solid #f1edf9;padding:10px 0}
+.hist .item:first-child{border-top:0}
+.tabs{display:flex;gap:8px;overflow-x:auto;margin-bottom:12px}
+.tabs button{white-space:nowrap;padding:8px 14px;background:#fff}
+.tabs button.on{background:var(--lil);color:#fff}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.item-card{background:#fff;border-radius:20px;padding:10px;text-align:center;box-shadow:0 3px 12px #8b7cf614}
+.item-card svg{width:100%;height:auto;border-radius:14px}
+.item-card b{display:block;margin:6px 0}
+.item-card button{width:100%;padding:8px}
+.item-card.worn{outline:3px solid var(--lil)}
+nav{position:fixed;left:0;right:0;bottom:0;background:#fff;display:flex;justify-content:center;gap:4px;padding:8px 8px calc(env(safe-area-inset-bottom) + 8px);box-shadow:0 -4px 18px #8b7cf61a}
+.hint{color:var(--mute);font-size:13px;margin:4px 0 10px}
+.gi{border-top:1px solid #f1edf9;padding:10px 0}
+.gi:first-child{border-top:0}
+.gi .t{font-weight:600;margin-bottom:6px}
+.gi .t:empty{display:none}
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.duo button{padding:9px 6px;background:#f6f2ff}
+.duo button.sel{background:var(--lil);color:#fff}
+.duo button.sel:disabled{opacity:1}
+.res{font-size:14px;color:var(--mute)}
+.score{text-align:center;font-size:18px;font-weight:600;margin:10px 0 0;color:var(--pink)}
+.moods{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}
+.moods div{background:#faf7ff;border-radius:16px;padding:10px;text-align:center;font-size:13px}
+.moods b{display:block;font-size:34px}
+.moodpick{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+.moodpick button{font-size:22px;padding:6px 8px;background:#f6f2ff}
+.moodpick button.sel{background:var(--lil)}
+.big{font-size:30px;font-weight:700;color:var(--pink);text-align:center;margin:8px 0 0}
+.mini{display:block;font-size:13px;color:var(--mute);margin:10px 0 4px}
+details summary{color:var(--lil);cursor:pointer;margin-top:10px;font-size:14px}
+.bk{display:flex;align-items:center;gap:8px;padding:8px 0;border-top:1px solid #f1edf9}
+.bk span{flex:1}
+.bk.done span{text-decoration:line-through;color:var(--mute)}
+.bk button{padding:6px 10px;background:#f6f2ff}
+nav button{flex:1;max-width:110px;padding:8px 2px;background:none;font-size:12px;display:flex;flex-direction:column;align-items:center;color:var(--mute)}
+nav button span{font-size:24px}
+nav button.on{color:var(--pink);background:var(--pink2)}
+.ovl{position:fixed;inset:0;background:#2b234088;display:flex;align-items:center;justify-content:center;padding:20px;z-index:10}
+.ovl[hidden]{display:none}
+.ovl .card{width:100%;max-width:400px}
+.ovl label{display:block;margin:12px 0 6px;font-weight:600}
+#toast{position:fixed;left:50%;bottom:100px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 16px;border-radius:14px;font-size:14px;opacity:0;transition:opacity .3s;pointer-events:none;max-width:90%;text-align:center;z-index:20}
+#toast.show{opacity:1}
+#status{text-align:center;color:var(--mute);font-size:14px;padding:6px}
+#status:empty{display:none}
+</style>
+</head>
+<body>
+<div id="app">
+  <header><h1>Nous Deux 💞</h1><div class="pill" id="coins">🪙 0</div></header>
+  <div id="status">Chargement…</div>
+
+  <section id="v-pet" class="view">
+    <div id="stage"><div id="petSvg"></div><div id="bubble"></div></div>
+    <h2 id="petName"></h2>
+    <div class="sub" id="lastAct"></div>
+    <div class="sub" id="moodLine"></div>
+    <div class="card">
+      <div id="bars"></div>
+      <div class="btns">
+        <button data-act="feed"><span>🐟</span>Nourrir</button>
+        <button data-act="play"><span>⚽</span>Jouer</button>
+        <button data-act="sleep"><span>💤</span>Dodo</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="lbl">Laisser un mot doux</div>
+      <div class="row" style="margin-top:8px"><input id="noteIn" maxlength="120" placeholder="Il s'affichera chez l'autre 💌"><button class="main" id="noteBtn">Envoyer</button></div>
+    </div>
+  </section>
+
+  <section id="v-q" class="view" hidden>
+    <div class="card">
+      <div class="lbl" id="qDate"></div>
+      <div class="q" id="qText"></div>
+      <div id="qBody"></div>
+    </div>
+    <div class="card"><div class="lbl" id="streak"></div></div>
+    <div class="card hist"><div class="lbl" style="margin-bottom:6px">Nos réponses passées</div><div id="hist"></div></div>
+  </section>
+
+  <section id="v-games" class="view" hidden>
+    <div class="card"><div class="lbl">🤔 Qui de nous deux ?</div><div class="hint">Désigne qui de vous deux pour chaque phrase. Les résultats s'affichent quand vous avez fini tous les deux.</div><div id="who"></div></div>
+    <div class="card"><div class="lbl">⚖️ Ce ou cela ?</div><div class="hint">Choisissez chacun de votre côté. Êtes-vous sur la même longueur d'onde ?</div><div id="tot"></div></div>
+    <div class="sub">Nouvelles questions chaque jour · +5 🪙 par jeu terminé</div>
+  </section>
+
+  <section id="v-us" class="view" hidden>
+    <div class="card"><div class="lbl">Humeur du jour</div><div id="moods" class="moods"></div><div class="moodpick" id="moodPick"></div></div>
+    <div class="card">
+      <div class="lbl">Notre compteur</div>
+      <div id="counter"></div>
+      <details><summary>Modifier</summary>
+        <label class="mini">Ensemble depuis le</label><input type="date" id="cSince">
+        <label class="mini">Prochain rendez-vous</label><input id="cTitle" maxlength="40" placeholder="Resto, ciné, week-end…">
+        <input type="date" id="cDate" style="margin-top:6px">
+        <button class="main" id="cBtn" style="width:100%;margin-top:8px">Enregistrer</button>
+      </details>
+    </div>
+    <div class="card">
+      <div class="lbl">Inviter ma moitié</div>
+      <div class="hint">Envoie-lui ce lien (ou le code) : elle/il rejoindra votre espace.</div>
+      <div class="ans" id="codeShow" style="word-break:break-all"></div>
+      <button class="main" id="copyBtn" style="width:100%">Copier le lien</button>
+    </div>
+    <div class="card">
+      <div class="lbl">Notre bucket list</div>
+      <div class="row" style="margin:8px 0"><input id="bkIn" maxlength="80" placeholder="Un truc à faire ensemble…"><button class="main" id="bkBtn">Ajouter</button></div>
+      <div id="bucket"></div>
+    </div>
+  </section>
+
+  <section id="v-shop" class="view" hidden>
+    <div class="tabs" id="cats"></div>
+    <div class="grid" id="shop"></div>
+  </section>
+</div>
+
+<nav>
+  <button data-v="pet" class="on"><span>🐧</span>Notre bébé</button>
+  <button data-v="q"><span>💬</span>Question</button>
+  <button data-v="games"><span>🎲</span>Jeux</button>
+  <button data-v="us"><span>💞</span>Nous</button>
+  <button data-v="shop"><span>👒</span>Habits</button>
+</nav>
+
+<div id="start" class="ovl" hidden>
+  <div class="card">
+    <h2 style="margin-top:0">Nous Deux 💞</h2>
+    <div class="sub">Un espace rien qu'à vous deux.</div>
+    <button class="main" id="newSpace" style="width:100%">Créer notre espace</button>
+    <label for="joinIn" style="display:block;margin:16px 0 6px;font-weight:600">…ou rejoindre avec le code reçu</label>
+    <div class="row"><input id="joinIn" autocomplete="off" placeholder="Code"><button id="joinBtn">Rejoindre</button></div>
+  </div>
+</div>
+<div id="overlay" class="ovl" hidden>
+  <form class="card" id="obForm">
+    <h2 style="margin-top:0">Bienvenue 💞</h2>
+    <div class="sub">Ouvrez tous les deux ce même lien, chacun sur son téléphone.</div>
+    <label for="obNick">Ton prénom</label>
+    <input id="obNick" maxlength="20" required>
+    <div id="obPetWrap"><label for="obPet">Le nom de votre pingouin</label><input id="obPet" maxlength="20"></div>
+    <button class="main" style="width:100%;margin-top:16px">C'est parti</button>
+  </form>
+</div>
+<div id="toast"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, doc, collection, getDoc, setDoc, updateDoc, deleteDoc, addDoc, onSnapshot, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+// ---------- Questions du jour ----------
+const QUESTIONS = [
+"Quel est ton souvenir préféré de nous deux ?","Qu'est-ce qui t'a attiré(e) chez moi en premier ?","Si on partait demain en voyage, on irait où ?",
+"Quelle petite habitude chez moi te fait craquer ?","Quel plat tu voudrais qu'on cuisine ensemble ?","C'est quoi ton rendez-vous idéal ?",
+"Quelle chanson te fait penser à nous ?","Qu'est-ce que tu as appris grâce à moi ?","Si on avait un animal, ce serait lequel et comment il s'appellerait ?",
+"Quel est le moment où tu t'es dit que tu m'aimais ?","Qu'est-ce qui te rend fier/fière de moi ?","Quel film on devrait regarder ensemble ce week-end ?",
+"Un rêve que tu voudrais réaliser avec moi ?","Quel surnom tu aimerais que je te donne ?","Qu'est-ce qui te détend le plus après une longue journée ?",
+"Quel est ton super-pouvoir dans notre couple ?","Si on écrivait un livre sur nous, quel serait le titre ?","Quelle tenue de moi tu préfères ?",
+"Quelle activité tu voudrais qu'on essaie pour la première fois ?","C'est quoi le cadeau le plus mignon qu'on t'ait fait ?","Qu'est-ce qui te fait toujours rire chez moi ?",
+"Où tu te vois avec moi dans 5 ans ?","Quel jeu vidéo on devrait faire en duo ?","Quelle est ta saison préférée pour être ensemble ?",
+"Ton petit-déj de rêve un dimanche matin ?","Qu'est-ce que je fais qui te fait te sentir aimé(e) ?","Une chose que tu n'as jamais osé me dire (en mignon) ?",
+"Quel est ton endroit préféré où on est allés ?","Si on gagnait 1000 € aujourd'hui, on en ferait quoi ?","Quelle émoji me représente le mieux ?",
+"Quel compliment tu aimerais entendre plus souvent ?","C'est quoi notre chanson pour danser dans la cuisine ?","Quelle tradition tu voudrais qu'on crée à deux ?",
+"Plutôt soirée plaid-série ou sortie en ville ?","Quel moment de la journée tu préfères passer avec moi ?","Qu'est-ce qui t'a fait sourire aujourd'hui ?",
+"Quel sport tu voudrais qu'on pratique ensemble ?","Si on échangeait nos vies pour une journée, tu ferais quoi ?","Quelle qualité tu admires le plus chez moi ?",
+"Ton meilleur fou rire avec moi ?","C'est quoi ta façon préférée de te faire consoler ?","Quel pays tu voudrais découvrir avec moi ?",
+"Qu'est-ce qu'on fait mieux à deux que tout seul ?","Une petite chose que je pourrais faire pour toi cette semaine ?","Quelle est la plus belle photo de nous ?",
+"Si notre couple était un plat, ce serait lequel ?","Qu'est-ce qui te manque quand on n'est pas ensemble ?","Un défi qu'on pourrait relever à deux ce mois-ci ?",
+"Quel âge tu avais à ton premier coup de cœur ?","Quelle est ta plus grande fierté cette année ?","Plutôt montagne ou mer pour nos prochaines vacances ?",
+"Quel personnage de fiction te ressemble le plus ?","Qu'est-ce qui te rend nerveux/nerveuse en ce moment ?","Quel style de maison tu imagines pour nous ?",
+"Un mot pour décrire notre relation ?","Qu'est-ce que tu voudrais qu'on fasse plus souvent ?","C'est quoi ton dessert préféré à partager ?",
+"Quelle est la chose la plus folle que tu ferais pour moi ?","Qu'est-ce que tu as pensé de moi la première fois qu'on s'est vus ?","Merci pour… (complète la phrase)"
+];
+
+// ---------- Mini-jeux ----------
+const WHO = [
+"Qui est le/la plus têtu(e) ?","Qui s'endort en premier devant un film ?","Qui est le/la plus jaloux/jalouse ?","Qui cuisine le mieux ?",
+"Qui a dit « je t'aime » en premier ?","Qui est le/la plus drôle ?","Qui met le plus de temps à se préparer ?","Qui est le/la plus gourmand(e) ?",
+"Qui gagne le plus souvent aux jeux vidéo ?","Qui s'excuse en premier après une dispute ?","Qui est le/la plus romantique ?","Qui dépense le plus ?",
+"Qui est toujours en retard ?","Qui a le plus de mauvaise foi ?","Qui pique la couverture la nuit ?","Qui est le/la plus sportif/sportive ?",
+"Qui pleure devant les films ?","Qui est le/la plus bordélique ?","Qui envoie le plus de messages ?","Qui a le meilleur style ?",
+"Qui a le plus peur des araignées ?","Qui est le/la plus câlin(e) ?","Qui oublie toujours tout ?","Qui chante le plus faux ?",
+"Qui est le/la plus patient(e) ?","Qui a le plus de mal à se lever le matin ?","Qui organise les sorties ?","Qui craque le plus vite devant un dessert ?",
+"Qui a le plus le sens de l'orientation ?","Qui survivrait le plus longtemps sur une île déserte ?"
+];
+const TOT = [
+["Plage","Montagne"],["Pizza","Sushi"],["Soirée canapé","Sortie en ville"],["Chat","Chien"],["Été","Hiver"],["Café","Thé"],
+["Sucré","Salé"],["Matin","Soir"],["Ville","Campagne"],["Avion","Road trip"],["Texto","Appel"],["Cinéma","Concert"],
+["Douche","Bain"],["Burger","Tacos"],["Crêpes","Gaufres"],["Jeux vidéo","Jeux de société"],["Restau","Pique-nique"],["Basket","Foot"],
+["Chocolat","Vanille"],["Pyjama","Tenue stylée"],["Mer","Piscine"],["Soleil","Neige"],["Rap","Pop"],["Film d'horreur","Comédie"],
+["Lève-tôt","Couche-tard"],["Câlin","Bisou"],["Glace","Gâteau"],["Baskets","Chaussures classe"],["Lettre d'amour","Surprise cadeau"],["Running","Salle de sport"]
+];
+const MOODS = ['😍','😊','🤩','😴','🥺','😤','😢','🤒'];
+const dayNum = key => { const [y, m, d] = key.split('-').map(Number); return Math.floor(Date.UTC(y, m - 1, d) / 864e5); };
+const pick5 = (list, key) => Array.from({length: 5}, (_, i) => list[(dayNum(key) * 5 + i) % list.length]);
+const fmt = key => key.split('-').reverse().join('/');
+const count = o => Object.keys(o || {}).length;
+
+// ---------- Garde-robe ----------
+const ACC = {
+  bonnet:'<path d="M58 72 Q60 30 100 28 Q140 30 142 72 Z" fill="#ff6b8b"/><rect x="54" y="64" width="92" height="14" rx="7" fill="#fff0f3"/><circle cx="100" cy="26" r="10" fill="#fff0f3"/>',
+  casquette:'<path d="M62 66 Q64 34 100 34 Q136 34 138 66 Z" fill="#4d96ff"/><path d="M100 60 Q150 56 164 68 Q130 72 100 66Z" fill="#3a7bd5"/><circle cx="100" cy="36" r="4" fill="#3a7bd5"/>',
+  noeud:'<path d="M128 56 L108 44 L110 68 Z M128 56 L148 44 L146 68 Z" fill="#ff4d6d"/><circle cx="128" cy="56" r="6" fill="#c9184a"/>',
+  paille:'<ellipse cx="100" cy="60" rx="66" ry="12" fill="#e9bf7a"/><path d="M68 60 Q70 26 100 26 Q130 26 132 60 Z" fill="#f4d9a6"/><rect x="69" y="47" width="62" height="8" fill="#e76f51"/>',
+  couronne:'<path d="M70 62 L72 30 L86 46 L100 24 L114 46 L128 30 L130 62 Z" fill="#ffd166" stroke="#e0a800" stroke-width="2"/><circle cx="100" cy="46" r="4" fill="#ef476f"/><circle cx="84" cy="54" r="3" fill="#06d6a0"/><circle cx="116" cy="54" r="3" fill="#118ab2"/>',
+  rondes:'<g fill="#ffffff55" stroke="#7b4b2a" stroke-width="3"><circle cx="84" cy="90" r="12"/><circle cx="116" cy="90" r="12"/></g><path d="M96 90 h8" stroke="#7b4b2a" stroke-width="3"/>',
+  soleil:'<rect x="69" y="80" width="28" height="20" rx="8" fill="#111"/><rect x="103" y="80" width="28" height="20" rx="8" fill="#111"/><path d="M97 88 h6" stroke="#111" stroke-width="3"/><path d="M74 85 h9 M108 85 h9" stroke="#fff" stroke-width="2" opacity=".5"/>',
+  coeur:'<g fill="#ff4d6d"><path transform="translate(84 92) scale(1.5)" d="M0 6 C-14 -4 -8 -16 0 -8 C8 -16 14 -4 0 6Z"/><path transform="translate(116 92) scale(1.5)" d="M0 6 C-14 -4 -8 -16 0 -8 C8 -16 14 -4 0 6Z"/></g><path d="M96 88 h8" stroke="#ff4d6d" stroke-width="3"/>',
+  echarpe:'<path d="M60 118 Q100 136 140 118 L142 132 Q100 150 58 132 Z" fill="#e63946"/><path d="M116 132 L130 172 L114 174 L106 136 Z" fill="#c1121f"/>',
+  papillon:'<path d="M100 124 L82 113 L82 135 Z M100 124 L118 113 L118 135 Z" fill="#7b2cbf"/><circle cx="100" cy="124" r="5" fill="#5a189a"/>',
+  collier:'<path d="M70 118 Q100 138 130 118" fill="none" stroke="#ffd166" stroke-width="3"/><path transform="translate(100 134) scale(.8)" d="M0 6 C-14 -4 -8 -16 0 -8 C8 -16 14 -4 0 6Z" fill="#ff4d6d"/>',
+};
+const BG = {
+  banquise:'<rect width="200" height="230" fill="#d6ecff"/><circle cx="165" cy="35" r="16" fill="#fff6c2"/><path d="M0 190 Q50 175 100 185 T200 180 V230 H0Z" fill="#fff"/>',
+  plage:'<rect width="200" height="230" fill="#bfe6ff"/><circle cx="165" cy="35" r="18" fill="#ffd166"/><rect y="158" width="200" height="30" fill="#4cc9f0"/><path d="M0 188 Q100 172 200 188 V230 H0Z" fill="#f6d79a"/>',
+  nuit:'<rect width="200" height="230" fill="#1e2459"/><circle cx="160" cy="38" r="14" fill="#fff4c4"/><g fill="#fff"><circle cx="30" cy="30" r="1.6"/><circle cx="60" cy="60" r="1.2"/><circle cx="110" cy="22" r="1.5"/><circle cx="20" cy="110" r="1.2"/><circle cx="180" cy="100" r="1.4"/><circle cx="140" cy="70" r="1"/></g><path d="M0 190 Q100 176 200 190 V230 H0Z" fill="#cfd8ff"/>',
+  sunset:'<defs><linearGradient id="gs" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff9a8b"/><stop offset="1" stop-color="#ffd3a5"/></linearGradient></defs><rect width="200" height="230" fill="url(#gs)"/><circle cx="100" cy="170" r="34" fill="#ffe08a"/><path d="M0 188 Q100 176 200 188 V230 H0Z" fill="#ffe8de"/>',
+};
+const ITEMS = [
+  {id:'bonnet',slot:'head',name:'Bonnet',price:30},{id:'casquette',slot:'head',name:'Casquette',price:40},
+  {id:'noeud',slot:'head',name:'Nœud',price:25},{id:'paille',slot:'head',name:'Chapeau de paille',price:60},
+  {id:'couronne',slot:'head',name:'Couronne',price:150},
+  {id:'rondes',slot:'face',name:'Lunettes rondes',price:35},{id:'soleil',slot:'face',name:'Lunettes de soleil',price:50},
+  {id:'coeur',slot:'face',name:'Lunettes cœur',price:80},
+  {id:'echarpe',slot:'neck',name:'Écharpe',price:30},{id:'papillon',slot:'neck',name:'Nœud papillon',price:40},
+  {id:'collier',slot:'neck',name:'Collier cœur',price:70},
+  {id:'banquise',slot:'bg',name:'Banquise',price:0},{id:'plage',slot:'bg',name:'Plage',price:70},
+  {id:'nuit',slot:'bg',name:'Nuit étoilée',price:90},{id:'sunset',slot:'bg',name:'Coucher de soleil',price:90},
+];
+const CATS = [['head','🎩 Chapeaux'],['face','🕶️ Lunettes'],['neck','🧣 Cou'],['bg','🏝️ Décors']];
+
+function penguin(o = {}, mood = 'ok') {
+  const eyes = {
+    happy:'<g fill="none" stroke="#1b1b2f" stroke-width="3.5" stroke-linecap="round"><path d="M78 93 Q84 84 90 93"/><path d="M110 93 Q116 84 122 93"/></g>',
+    ok:'<circle cx="84" cy="90" r="6.5" fill="#1b1b2f"/><circle cx="116" cy="90" r="6.5" fill="#1b1b2f"/><circle cx="86" cy="88" r="2" fill="#fff"/><circle cx="118" cy="88" r="2" fill="#fff"/>',
+    sad:'<circle cx="84" cy="92" r="6" fill="#1b1b2f"/><circle cx="116" cy="92" r="6" fill="#1b1b2f"/><path d="M74 80 L90 84 M126 80 L110 84" stroke="#1b1b2f" stroke-width="3" stroke-linecap="round"/><path d="M120 100 q-4 8 0 10 q4 -2 0 -10Z" fill="#74c0fc"/>',
+    sleep:'<g fill="none" stroke="#1b1b2f" stroke-width="3.5" stroke-linecap="round"><path d="M78 90 Q84 96 90 90"/><path d="M110 90 Q116 96 122 90"/></g><text x="146" y="52" font-size="20" fill="#8b7cf6" font-family="Fredoka">z</text><text x="160" y="36" font-size="14" fill="#8b7cf6" font-family="Fredoka">z</text>',
+  }[mood];
+  return `<svg viewBox="0 0 200 230" xmlns="http://www.w3.org/2000/svg">${BG[o.bg] || BG.banquise}
+  <ellipse cx="100" cy="216" rx="52" ry="8" fill="#000" opacity=".12"/>
+  <g class="bob">
+    <ellipse cx="40" cy="140" rx="14" ry="34" transform="rotate(25 40 140)" fill="#26304f"/>
+    <ellipse cx="160" cy="140" rx="14" ry="34" transform="rotate(-25 160 140)" fill="#26304f"/>
+    <ellipse cx="100" cy="132" rx="62" ry="80" fill="#2b3557"/>
+    <ellipse cx="100" cy="150" rx="44" ry="58" fill="#fff"/>
+    <ellipse cx="100" cy="96" rx="40" ry="30" fill="#fff"/>
+    <ellipse cx="80" cy="211" rx="16" ry="7" fill="#ff9f43"/><ellipse cx="120" cy="211" rx="16" ry="7" fill="#ff9f43"/>
+    <circle cx="70" cy="104" r="7" fill="#ff8fab" opacity=".55"/><circle cx="130" cy="104" r="7" fill="#ff8fab" opacity=".55"/>
+    ${eyes}
+    <path d="M90 100 Q100 96 110 100 L100 113 Z" fill="#ff9f43"/>
+    ${ACC[o.neck] || ''}${ACC[o.face] || ''}${ACC[o.head] || ''}
+  </g></svg>`;
+}
+
+// ---------- État & stats ----------
+const RATES = {food:5, fun:4, sleep:3}; // points perdus par heure
+const STAT_UI = [['food','🐟 Faim','#ff9f43'],['fun','💗 Bonheur','#ff6b8b'],['sleep','💤 Énergie','#8b7cf6']];
+const ACTIONS = {
+  feed:{k:'food',d:30,txt:'a nourri',fx:'🐟',full:"Il n'a plus faim 😋"},
+  play:{k:'fun',d:25,txt:'a joué avec',fx:'💗',full:'Il est déjà aux anges 🥰'},
+  sleep:{k:'sleep',d:35,txt:'a couché',fx:'💤',full:"Il n'a pas sommeil 👀"},
+};
+let db = null, uid = null, pet, petLoaded = false, members = {}, membersLoaded = false, answers = [], busy = false, cat = 'head';
+let games = null, myG = null, gq = Promise.resolve(), info = null, bucket = [];
+
+function stats(p, now = Date.now()) {
+  const h = (now - (p.t || now)) / 36e5, o = {};
+  for (const k in RATES) o[k] = Math.max(0, Math.min(100, (p[k] ?? 80) - RATES[k] * h));
+  return o;
+}
+function moodOf(s) {
+  if (s.sleep < 20) return 'sleep';
+  if (Math.min(s.food, s.fun) < 25) return 'sad';
+  return (s.food + s.fun + s.sleep) / 3 > 70 ? 'happy' : 'ok';
+}
+const nick = id => members[id]?.nick || "Quelqu'un";
+const partnerId = () => Object.keys(members).find(id => id !== uid);
+function ago(t) {
+  const m = Math.round((Date.now() - t) / 6e4);
+  if (m < 1) return "à l'instant";
+  if (m < 60) return `il y a ${m} min`;
+  const h = Math.round(m / 60);
+  return h < 24 ? `il y a ${h} h` : `il y a ${Math.round(h / 24)} j`;
+}
+function dayKey(d = new Date()) { return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
+const questionFor = key => QUESTIONS[dayNum(key) % QUESTIONS.length];
+
+function toast(msg) {
+  const t = $('#toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(toast.h); toast.h = setTimeout(() => t.classList.remove('show'), 2600);
+}
+async function write(fn) {
+  try { await fn(); return true; }
+  catch (e) {
+    if (e?.code === 'unavailable') { await new Promise(r => setTimeout(r, 400 + Math.random() * 600)); try { await fn(); return true; } catch {} }
+    if (e?.code === 'permission-denied') toast("Accès refusé : vérifie la configuration Firebase.");
+    else toast('Oups, ça n\'a pas marché. Réessaie.');
+    return false;
+  }
+}
+const petRef = () => db.doc('couple/pet');
+
+// ---------- Rendu ----------
+function renderPet() {
+  if (!pet) return;
+  const s = stats(pet), o = pet.outfit || {};
+  $('#petSvg').innerHTML = penguin(o, moodOf(s));
+  $('#petName').textContent = pet.name || 'Notre pingouin';
+  $('#coins').textContent = '🪙 ' + (pet.coins || 0);
+  $('#bars').innerHTML = STAT_UI.map(([k, l, c]) =>
+    `<div class="bar"><span>${l}</span><div class="track"><div class="fill" style="width:${s[k]}%;background:${c}"></div></div><span>${Math.round(s[k])}</span></div>`).join('');
+  const L = pet.last;
+  $('#lastAct').textContent = L ? `${L.by === uid ? 'Tu' : nick(L.by)} ${L.what} ${pet.name || 'le pingouin'} ${ago(L.at)}` : '';
+  $('#moodLine').textContent = Object.keys(members).filter(id => members[id].mood)
+    .map(id => `${id === uid ? 'Toi' : members[id].nick} ${members[id].mood}`).join('  ·  ');
+  const n = pet.note, mood = moodOf(s);
+  $('#bubble').innerHTML = n && Date.now() - n.at < 72 * 36e5
+    ? `💌 <b>${esc(n.from === uid ? 'Toi' : nick(n.from))}</b> : ${esc(n.text)}`
+    : esc({sad: s.food < 25 ? "J'ai faiiim… 🥺" : 'Joue avec moi 🥺', sleep: 'Je suis tout fatigué…', happy: 'Je vous aime tous les deux ! 💞', ok: ''}[mood]);
+}
+
+function renderQ() {
+  const key = dayKey(), pid = partnerId();
+  const today = answers.filter(a => a.date === key);
+  const mine = today.find(a => a.uid === uid), theirs = today.find(a => a.uid === pid);
+  $('#qDate').textContent = 'Question du ' + new Date().toLocaleDateString('fr-FR', {weekday:'long', day:'numeric', month:'long'});
+  $('#qText').textContent = questionFor(key);
+  const pName = pid ? esc(nick(pid)) : 'Ton/ta partenaire';
+  $('#qBody').innerHTML = (mine
+      ? `<div class="lbl">Ta réponse</div><div class="ans">${esc(mine.text)}</div>`
+      : `<textarea id="ansIn" rows="3" maxlength="500" placeholder="Ta réponse…"></textarea><button class="main" id="ansBtn" style="width:100%;margin-top:8px">Répondre (+10 🪙)</button>`)
+    + `<div class="lbl">${pName}</div>`
+    + (!theirs ? `<div class="ans lock">⏳ Pas encore répondu</div>`
+       : mine ? `<div class="ans">${esc(theirs.text)}</div>`
+       : `<div class="ans lock">🔒 A répondu ! Réponds pour voir sa réponse</div>`);
+  const btn = $('#ansBtn');
+  if (btn) btn.onclick = answer;
+
+  // jours où les deux ont répondu
+  const byDay = {};
+  for (const a of answers) (byDay[a.date] ||= {})[a.uid] = a.text;
+  const both = d => byDay[d] && Object.keys(byDay[d]).length >= 2;
+  let streak = 0, d = new Date();
+  if (!both(dayKey(d))) d.setDate(d.getDate() - 1); // aujourd'hui pas encore fini : on ne casse pas la série
+  while (both(dayKey(d))) { streak++; d.setDate(d.getDate() - 1); }
+  $('#streak').textContent = `🔥 Série : ${streak} jour${streak > 1 ? 's' : ''} où vous avez répondu tous les deux`;
+
+  const days = Object.keys(byDay).filter(k => k !== key).sort().reverse();
+  $('#hist').innerHTML = days.length ? days.map(k => {
+    const ids = Object.keys(byDay[k]);
+    return `<div class="item"><div class="lbl">${k.split('-').reverse().join('/')}</div><div style="font-weight:600;margin:4px 0">${esc(questionFor(k))}</div>`
+      + ids.map(id => `<div class="ans"><b>${esc(id === uid ? 'Toi' : nick(id))}</b> : ${esc(byDay[k][id])}</div>`).join('') + '</div>';
+  }).join('') : '<div class="lock">Vos réponses apparaîtront ici jour après jour.</div>';
+}
+
+function renderShop() {
+  $('#cats').innerHTML = CATS.map(([c, l]) => `<button data-cat="${c}" class="${c === cat ? 'on' : ''}">${l}</button>`).join('');
+  if (!pet) return;
+  const owned = pet.owned || ['banquise'], o = pet.outfit || {};
+  $('#shop').innerHTML = ITEMS.filter(i => i.slot === cat).map(i => {
+    const has = owned.includes(i.id), worn = (o[i.slot] || (i.slot === 'bg' ? 'banquise' : null)) === i.id;
+    const preview = i.slot === 'bg' ? {bg: i.id} : {[i.slot]: i.id};
+    const btn = !has ? `<button class="main" data-buy="${i.id}" ${(pet.coins || 0) < i.price ? 'disabled' : ''}>Acheter 🪙 ${i.price}</button>`
+      : worn ? (i.slot === 'bg' ? '<button disabled>En place</button>' : `<button data-off="${i.slot}">Retirer</button>`)
+      : `<button data-wear="${i.id}">Mettre</button>`;
+    return `<div class="item-card ${worn ? 'worn' : ''}">${penguin(preview, 'ok')}<b>${i.name}</b>${btn}</div>`;
+  }).join('');
+}
+function renderGames() {
+  if (!uid || !games) return;
+  const key = dayKey(), pid = partnerId(), pName = esc(pid ? nick(pid) : 'ton/ta partenaire');
+  if (!myG || myG.date !== key) {
+    const saved = games.find(g => g.date === key && g.uid === uid);
+    myG = saved ? JSON.parse(JSON.stringify(saved)) : null;
+    if (myG) { myG.who ||= {}; myG.tot ||= {}; } else myG = {date: key, uid, who: {}, tot: {}};
+  }
+  const th = games.find(g => g.date === key && g.uid === pid) || {};
+  const block = (g, items, opts, verdict) => {
+    const mine = myG[g], theirs = th[g] || {}, done = count(mine) === 5 && count(theirs) === 5;
+    let ok = 0;
+    const html = items.map((it, i) => {
+      const o = opts(it), v = verdict(mine[i], theirs[i], o);
+      if (done && v.ok) ok++;
+      return `<div class="gi"><div class="t">${esc(g === 'who' ? it : '')}</div><div class="duo">`
+        + o.map(([val, label]) => `<button data-g="${g}" data-i="${i}" data-c="${val}" class="${mine[i] === val ? 'sel' : ''}" ${done ? 'disabled' : ''}>${label}</button>`).join('')
+        + `</div>${done ? `<div class="res">${v.txt}</div>` : ''}</div>`;
+    }).join('');
+    const foot = done ? `<div class="score">${ok}/5 en commun ${ok >= 4 ? '💞' : ok >= 2 ? '😊' : '🙈'}</div>`
+      : count(mine) === 5 ? `<div class="res" style="text-align:center;margin-top:8px">⏳ En attente de ${pName}…</div>` : '';
+    return html + foot;
+  };
+  $('#who').innerHTML = block('who', pick5(WHO, key), () => [['me', 'Moi'], ['you', pName]], (m, t) => {
+    const ok = (m === 'me') === (t === 'you'), me = esc(nick(uid));
+    return {ok, txt: ok ? `✅ D'accord : ${m === 'me' ? me : pName}` : `❌ Toi : ${m === 'me' ? me : pName} · ${pName} : ${t === 'me' ? pName : me}`};
+  });
+  $('#tot').innerHTML = block('tot', pick5(TOT, key), it => [['0', esc(it[0])], ['1', esc(it[1])]], (m, t, o) => {
+    const ok = m === t;
+    return {ok, txt: ok ? '✅ Pareil !' : `❌ ${pName} a choisi ${o[+t]?.[1] ?? '?'}`};
+  });
+}
+
+function renderUs() {
+  if (!uid) return;
+  const pid = partnerId(), today = dayKey();
+  const card = id => { const m = members[id] || {}; return `<div><b>${m.mood || '❔'}</b>${esc(id === uid ? 'Toi' : nick(id))}${m.moodAt ? '<br>' + ago(m.moodAt) : ''}</div>`; };
+  $('#moods').innerHTML = card(uid) + (pid ? card(pid) : '<div><b>❔</b>En attente…</div>');
+  $('#moodPick').innerHTML = MOODS.map(e => `<button data-m="${e}" class="${members[uid]?.mood === e ? 'sel' : ''}">${e}</button>`).join('');
+
+  const i = info || {};
+  let c = i.since ? `<div class="big">${dayNum(today) - dayNum(i.since)} jours</div><div class="sub">ensemble depuis le ${fmt(i.since)} 💞</div>`
+    : '<div class="hint">Indiquez la date où vous vous êtes mis ensemble 👇</div>';
+  if (i.date && dayNum(i.date) >= dayNum(today)) {
+    const n = dayNum(i.date) - dayNum(today);
+    c += `<div class="ans">📅 ${esc(i.title || 'Prochain rendez-vous')} : ${n === 0 ? "c'est aujourd'hui ! 🎉" : n === 1 ? 'demain !' : `dans ${n} jours`}</div>`;
+  }
+  $('#counter').innerHTML = c;
+  if (!$('#v-us details').open) { $('#cSince').value = i.since || ''; $('#cTitle').value = i.title || ''; $('#cDate').value = i.date || ''; }
+
+  const list = [...bucket].sort((a, b) => a.done - b.done || a.at - b.at);
+  $('#bucket').innerHTML = list.length ? list.map(b => `<div class="bk ${b.done ? 'done' : ''}"><button data-done="${b.id}">${b.done ? '✅' : '⬜'}</button><span>${esc(b.text)}</span><button data-del="${b.id}" aria-label="Supprimer">✕</button></div>`).join('')
+    : '<div class="lock">Ajoutez tout ce que vous rêvez de faire ensemble ✨</div>';
+}
+function renderAll() { renderPet(); renderQ(); renderGames(); renderUs(); renderShop(); }
+
+// ---------- Actions ----------
+async function act(a) {
+  if (busy || !pet) return;
+  const A = ACTIONS[a], s = stats(pet), before = s[A.k];
+  if (before >= 95) return toast(A.full);
+  s[A.k] = Math.min(100, before + A.d);
+  if (a === 'play') s.sleep = Math.max(0, s.sleep - 8);
+  for (const k in s) s[k] = Math.round(s[k] * 10) / 10;
+  burst(A.fx);
+  busy = true;
+  // ponytail: dernier qui écrit gagne ; si vous appuyez pile en même temps, une action peut sauter. Sans gravité ici.
+  await write(() => petRef().update({...s, t: Date.now(), coins: (pet.coins || 0) + (before < 70 ? 2 : 0),
+    last: {by: uid, what: A.txt, at: Date.now()}}));
+  busy = false;
+}
+function burst(ch) {
+  for (let i = 0; i < 5; i++) {
+    const e = document.createElement('div');
+    e.className = 'fx'; e.textContent = ch;
+    e.style.left = 20 + Math.random() * 60 + '%'; e.style.top = 55 + Math.random() * 20 + '%';
+    e.style.animationDelay = i * 0.08 + 's';
+    $('#stage').appendChild(e); setTimeout(() => e.remove(), 1500);
+  }
+}
+async function answer() {
+  const text = $('#ansIn').value.trim();
+  if (!text) return toast('Écris quelque chose 😊');
+  $('#ansBtn').disabled = true;
+  const key = dayKey();
+  if (await write(() => db.doc(`answers/${key}_${uid}`).set({date: key, uid, text, at: Date.now()}))) {
+    await write(() => petRef().update({coins: (pet.coins || 0) + 10}));
+    toast('+10 🪙 pour votre pingouin !');
+  } else $('#ansBtn').disabled = false;
+}
+async function shopClick(e) {
+  const b = e.target.closest('button'); if (!b || busy || !pet) return;
+  const o = {...(pet.outfit || {})}, owned = pet.owned || ['banquise'];
+  let patch;
+  if (b.dataset.buy) {
+    const it = ITEMS.find(i => i.id === b.dataset.buy);
+    if ((pet.coins || 0) < it.price) return;
+    o[it.slot] = it.id;
+    patch = {coins: pet.coins - it.price, owned: [...owned, it.id], outfit: o, last: {by: uid, what: `a offert « ${it.name} » à`, at: Date.now()}};
+  } else if (b.dataset.wear) {
+    const it = ITEMS.find(i => i.id === b.dataset.wear); o[it.slot] = it.id; patch = {outfit: o};
+  } else if (b.dataset.off) { o[b.dataset.off] = null; patch = {outfit: o}; }
+  else return;
+  busy = true; await write(() => petRef().update(patch)); busy = false;
+}
+
+// ---------- Navigation ----------
+document.querySelectorAll('nav button').forEach(b => b.onclick = () => {
+  document.querySelectorAll('nav button').forEach(x => x.classList.toggle('on', x === b));
+  document.querySelectorAll('.view').forEach(v => v.hidden = v.id !== 'v-' + b.dataset.v);
+  scrollTo(0, 0);
+});
+document.querySelectorAll('[data-act]').forEach(b => b.onclick = () => act(b.dataset.act));
+$('#cats').onclick = e => { const b = e.target.closest('[data-cat]'); if (b) { cat = b.dataset.cat; renderShop(); } };
+$('#shop').onclick = shopClick;
+$('#noteBtn').onclick = async () => {
+  const text = $('#noteIn').value.trim(); if (!text || !pet || busy) return;
+  busy = true;
+  if (await write(() => petRef().update({note: {from: uid, text, at: Date.now()}}))) { $('#noteIn').value = ''; toast('Mot doux envoyé 💌'); }
+  busy = false;
+};
+
+$('#v-games').onclick = e => {
+  const b = e.target.closest('button[data-g]'); if (!b || b.disabled || !db) return;
+  const g = b.dataset.g, before = count(myG[g]);
+  myG[g][b.dataset.i] = b.dataset.c;
+  renderGames();
+  const body = JSON.parse(JSON.stringify(myG));
+  gq = gq.then(() => write(() => db.doc(`games/${body.date}_${uid}`).set(body))); // écritures une par une
+  if (before < 5 && count(myG[g]) === 5 && pet)
+    gq = gq.then(() => write(() => petRef().update({coins: (pet.coins || 0) + 5}))).then(ok => ok && toast('+5 🪙 pour votre pingouin !'));
+};
+$('#moodPick').onclick = e => {
+  const b = e.target.closest('[data-m]'); if (!b || !members[uid]) return;
+  write(() => db.doc('members/' + uid).update({mood: b.dataset.m, moodAt: Date.now()}));
+};
+$('#cBtn').onclick = async () => {
+  const body = {since: $('#cSince').value, title: $('#cTitle').value.trim(), date: $('#cDate').value};
+  if (await write(() => db.doc('couple/info').set(body))) { $('#v-us details').open = false; toast('Enregistré 💞'); }
+};
+$('#bkBtn').onclick = async () => {
+  const text = $('#bkIn').value.trim(); if (!text) return;
+  if (await write(() => db.collection('bucket').add({text, done: false, by: uid, at: Date.now()}))) $('#bkIn').value = '';
+};
+$('#bucket').onclick = async e => {
+  const b = e.target.closest('button'); if (!b) return;
+  if (b.dataset.del) return write(() => db.doc('bucket/' + b.dataset.del).delete());
+  const it = bucket.find(x => x.id === b.dataset.done); if (!it) return;
+  await write(() => db.doc('bucket/' + it.id).update({done: !it.done, doneOnce: true}));
+  if (!it.done && !it.doneOnce && pet) { await write(() => petRef().update({coins: (pet.coins || 0) + 5})); toast('Bravo ! +5 🪙 🎉'); }
+};
+
+// ---------- Onboarding ----------
+function maybeOnboard() {
+  if (!membersLoaded || !petLoaded) return;
+  const need = !members[uid] || !pet;
+  $('#overlay').hidden = !need;
+  $('#obPetWrap').hidden = !!pet;
+  $('#obPet').required = !pet;
+}
+$('#obForm').onsubmit = async e => {
+  e.preventDefault();
+  const n = $('#obNick').value.trim(), p = $('#obPet').value.trim();
+  if (!pet) {
+    const ok = await write(() => petRef().set({name: p || 'Pingou', food: 80, fun: 80, sleep: 80, t: Date.now(), coins: 10000,
+      owned: ['banquise'], outfit: {bg: 'banquise'}, last: null, note: null}));
+    if (!ok) return;
+  }
+  if (await write(() => db.doc('members/' + uid).set({nick: n, at: Date.now()}))) $('#overlay').hidden = true;
+};
+
+// ---------- Firebase ----------
+// Colle ici la config de ton projet Firebase (Console Firebase > Paramètres du projet > Tes applications > Web).
+const firebaseConfig = {
+  apiKey: "AIzaSyDrUV7hOAMzjZJen8x9EKLBvt3NNtitrhM",
+  authDomain: "nous-deux-bd7f2.firebaseapp.com",
+  projectId: "nous-deux-bd7f2",
+  storageBucket: "nous-deux-bd7f2.firebasestorage.app",
+  messagingSenderId: "94909323981",
+  appId: "1:94909323981:web:20945389e567d61187a784"
+};
+
+// Petit adaptateur : le reste de l'appli parle à `db` avec doc()/collection()/onSnapshot().
+function wrapDb(fs, base) {
+  const snap = s => ({id: s.id, exists: s.exists(), data: () => s.data(), metadata: s.metadata});
+  const wrapRef = r => ({
+    id: r.id,
+    get: async () => snap(await getDoc(r)),
+    set: d => setDoc(r, d), update: d => updateDoc(r, d), delete: () => deleteDoc(r),
+    onSnapshot: (n, e) => onSnapshot(r, s => n(snap(s)), e),
+  });
+  const wrapQ = (q, c) => ({
+    orderBy: (f, d) => wrapQ(query(q, orderBy(f, d)), c),
+    limit: k => wrapQ(query(q, limit(k)), c),
+    doc: id => wrapRef(id ? doc(c, id) : doc(c)),
+    add: d => addDoc(c, d),
+    onSnapshot: (n, e) => onSnapshot(q, s => n({docs: s.docs.map(snap), empty: s.empty, size: s.size, metadata: s.metadata}), e),
+  });
+  return {
+    doc: p => wrapRef(doc(fs, base + '/' + p)),
+    collection: p => { const c = collection(fs, base + '/' + p); return wrapQ(c, c); },
+  };
+}
+
+// Code du couple : dans le lien (#code) ou mémorisé sur le téléphone.
+const validCode = c => /^[a-z0-9]{16,40}$/.test(c || '');
+async function getCode() {
+  let c = location.hash.slice(1).toLowerCase();
+  if (!validCode(c)) { try { c = localStorage.getItem('nd-code'); } catch { c = null; } }
+  if (!validCode(c)) c = await new Promise(res => {
+    $('#start').hidden = false;
+    $('#newSpace').onclick = () => res(Array.from(crypto.getRandomValues(new Uint8Array(20)), b => (b % 36).toString(36)).join(''));
+    $('#joinBtn').onclick = () => {
+      const v = $('#joinIn').value.trim().split('#').pop().toLowerCase();
+      validCode(v) ? res(v) : toast('Code invalide 🤔');
+    };
+  });
+  $('#start').hidden = true;
+  try { localStorage.setItem('nd-code', c); } catch {}
+  history.replaceState(null, '', '#' + c); // le lien de la page reste partageable / ajoutable à l'écran d'accueil
+  return c;
+}
+
+// ---------- Démarrage ----------
+renderShop();
+$('#petSvg').innerHTML = penguin({}, 'ok');
+(async () => {
+  if (!firebaseConfig.apiKey) { $('#status').textContent = '⚙️ Colle ta configuration Firebase dans le fichier (voir firebaseConfig).'; return; }
+  const app = initializeApp(firebaseConfig);
+  try { uid = (await signInAnonymously(getAuth(app))).user.uid; }
+  catch { $('#status').textContent = 'Connexion impossible : active la connexion « Anonyme » dans Firebase.'; return; }
+  const code = await getCode();
+  const link = location.href.split('#')[0] + '#' + code;
+  $('#codeShow').textContent = link;
+  $('#copyBtn').onclick = () => navigator.clipboard.writeText(link).then(() => toast('Lien copié 💌'), () => toast('Copie impossible : sélectionne le lien à la main'));
+  db = wrapDb(getFirestore(app), 'couples/' + code);
+  const loading = setTimeout(() => { if (!petLoaded) $('#status').textContent = 'Connexion lente… les données arrivent.'; }, 10000);
+  const done = () => { clearTimeout(loading); if ($('#status').textContent.startsWith('Chargement') || $('#status').textContent.startsWith('Connexion')) $('#status').textContent = ''; };
+  const err = () => { done(); $('#status').textContent = 'Impossible de charger les données pour le moment.'; };
+
+  petRef().onSnapshot(s => {
+    if (!s.exists && s.metadata.fromCache) return;
+    pet = s.exists ? s.data() : null; petLoaded = true; done();
+    renderAll(); maybeOnboard();
+  }, err);
+  db.collection('members').onSnapshot(s => {
+    if (s.metadata.fromCache && s.empty) return;
+    members = Object.fromEntries(s.docs.map(x => [x.id, x.data()])); membersLoaded = true;
+    renderAll(); maybeOnboard();
+  }, err);
+  db.collection('answers').orderBy('date', 'desc').limit(400).onSnapshot(s => {
+    answers = s.docs.map(x => x.data()); renderQ();
+  }, err);
+  db.collection('games').orderBy('date', 'desc').limit(20).onSnapshot(s => { games = s.docs.map(x => x.data()); renderGames(); }, err);
+  db.doc('couple/info').onSnapshot(s => { info = s.exists ? s.data() : null; renderUs(); }, err);
+  db.collection('bucket').onSnapshot(s => { bucket = s.docs.map(x => ({id: x.id, ...x.data()})); renderUs(); }, err);
+  setInterval(renderPet, 30000); // les stats baissent avec le temps (calculées, pas écrites)
+})();
+</script>
+</body>
+</html>
