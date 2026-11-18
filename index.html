@@ -266,27 +266,85 @@ const ACC = {
   collier:'<path d="M70 118 Q100 138 130 118" fill="none" stroke="#ffd166" stroke-width="3"/><path transform="translate(100 134) scale(.8)" d="M0 6 C-14 -4 -8 -16 0 -8 C8 -16 14 -4 0 6Z" fill="#ff4d6d"/>',
 };
 // Vêtements : __C__ = forme du corps (les habits épousent le pingouin)
-const sl = (c, long) => long
-  ? `<ellipse cx="40" cy="138" rx="15" ry="33" transform="rotate(25 40 138)" fill="${c}"/><ellipse cx="160" cy="138" rx="15" ry="33" transform="rotate(-25 160 138)" fill="${c}"/>`
-  : `<ellipse cx="50" cy="122" rx="14" ry="13" transform="rotate(25 50 122)" fill="${c}"/><ellipse cx="150" cy="122" rx="14" ry="13" transform="rotate(-25 150 122)" fill="${c}"/>`;
+const mir = x => x + `<g transform="translate(200 0) scale(-1 1)">${x}</g>`; // côté gauche + son reflet
 const body = x => `<g clip-path="url(#__C__)">${x}</g>`;
-const top = (c, bottom) => `<path d="M20 116 Q100 134 180 116 V${bottom} H20Z" fill="${c}"/>`;
-const legs = c => `<path d="M100 186 V214" stroke="${c}" stroke-width="3"/>`;
+const ln = (d, c, w = 2, op = 1) => `<path d="${d}" fill="none" stroke="${c}" stroke-width="${w}" stroke-linecap="round" opacity="${op}"/>`;
+const st = (d, c) => `<path d="${d}" fill="none" stroke="${c}" stroke-width="1.2" stroke-dasharray="3 2.5" stroke-linecap="round" opacity=".85"/>`; // couture
+const SHADE = '<ellipse cx="30" cy="165" rx="24" ry="85" fill="#000" opacity=".17"/><ellipse cx="170" cy="165" rx="24" ry="85" fill="#000" opacity=".17"/><ellipse cx="82" cy="140" rx="9" ry="24" fill="#fff" opacity=".14"/>';
+const FOLDS = ln('M68 138 Q74 152 69 166', '#000', 2, .1) + ln('M131 140 Q126 154 132 167', '#000', 2, .1);
+const COLLAR = 'M40 117 Q100 135 160 117';
+const torso = (c, bottom) => `<path d="M20 116 Q100 134 180 116 V${bottom} H20Z" fill="${c}"/>`;
+const sleeveS = (c, d) => mir(`<path d="M66 116 Q44 112 31 134 L47 145 Q53 132 66 128Z" fill="${c}"/>${ln('M31 134 L47 145', d, 3.5)}${ln('M54 121 Q48 129 46 137', '#000', 2, .12)}`);
+const sleeveL = (c, d, cuff) => mir(`<path d="M66 116 Q42 110 29 138 Q20 158 21 172 L38 176 Q40 157 50 142 Q57 132 66 128Z" fill="${c}"/>${ln('M60 122 Q44 132 36 160', '#000', 2.5, .13)}${cuff || ln('M22 169 L38 173', d, 6)}`);
+const ribs = (y1, y2, c, step = 6, op = .35) => Array.from({length: Math.ceil(140 / step)}, (_, i) => ln(`M${30 + i * step} ${y1} V${y2}`, c, 1, op)).join('');
 const heart = (x, y, k, c) => `<path transform="translate(${x} ${y}) scale(${k})" d="M0 6 C-14 -4 -8 -16 0 -8 C8 -16 14 -4 0 6Z" fill="${c}"/>`;
+const flower = (x, y) => [0, 72, 144, 216, 288].map(a => `<circle cx="${x + 3 * Math.cos(a * Math.PI / 180)}" cy="${y + 3 * Math.sin(a * Math.PI / 180)}" r="2.2" fill="#fff"/>`).join('') + `<circle cx="${x}" cy="${y}" r="1.6" fill="#ffd166"/>`;
+const pleats = (xs, y1, y2, spread) => xs.map((x, i) => `<path d="M${x} ${y1} L${100 + (x - 100) * spread - 5} ${y2} L${100 + (x - 100) * spread + 5} ${y2}Z" fill="#000" opacity="${i % 2 ? .1 : .05}"/>`).join('');
+const both = f => f(80) + f(120); // une chaussure par patte
+
 Object.assign(ACC, {
-  tshirt: sl('#4dabf7') + body(top('#4dabf7', 174)) + heart(100, 150, 1, '#fff'),
-  pull: sl('#c77dff', 1) + body(top('#c77dff', 178) + '<rect x="20" y="171" width="160" height="7" fill="#9d4edd"/><path d="M20 116 Q100 134 180 116" fill="none" stroke="#9d4edd" stroke-width="5"/>'),
-  veste: sl('#8d6e63', 1) + body('<path d="M20 110 L82 118 L92 182 H20Z M180 110 L118 118 L108 182 H180Z" fill="#8d6e63"/>')
-    + '<path d="M82 118 L94 140 L86 146Z M118 118 L106 140 L114 146Z" fill="#6d4c41"/><circle cx="90" cy="158" r="2.5" fill="#4e342e"/><circle cx="90" cy="170" r="2.5" fill="#4e342e"/>',
-  robe: sl('#ff8fab') + body(top('#ff8fab', 172) + '<rect x="20" y="162" width="160" height="7" fill="#e05780"/>')
-    + '<path d="M58 168 H142 L164 202 Q100 214 36 202 Z" fill="#ff8fab"/><path d="M80 172 L72 206 M100 172 V210 M120 172 L128 206" stroke="#f26a8d" stroke-width="2" opacity=".6"/>',
-  combinaison: sl('#2ec4b6') + body(top('#2ec4b6', 240) + '<rect x="20" y="164" width="160" height="6" fill="#1a9e92"/><rect x="108" y="132" width="16" height="14" rx="3" fill="#1a9e92"/>' + legs('#1a9e92')),
-  pyjama: sl('#a0c4ff', 1) + body(top('#a0c4ff', 240)
-    + [[70,140],[130,138],[90,165],[120,180],[66,188],[136,196],[100,200]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="4" fill="#fff" opacity=".8"/>`).join('')
-    + '<circle cx="100" cy="140" r="2.5" fill="#5a7bd8"/><circle cx="100" cy="156" r="2.5" fill="#5a7bd8"/>' + legs('#7a9be0')),
-  pantalon: body('<rect x="20" y="168" width="160" height="60" fill="#355070"/><rect x="20" y="168" width="160" height="4" fill="#22385a"/>' + legs('#22385a')),
-  jupe: '<path d="M54 166 H146 L158 196 Q100 206 42 196 Z" fill="#e5989b"/><path d="M76 168 L70 199 M100 168 V203 M124 168 L130 199" stroke="#b5838d" stroke-width="2"/>',
-  short: body('<rect x="20" y="168" width="160" height="26" fill="#f4a261"/><rect x="20" y="168" width="160" height="4" fill="#e07a33"/><path d="M100 182 V194" stroke="#e07a33" stroke-width="3"/>'),
+  // --- hauts & tenues ---
+  tshirt: body(torso('#4dabf7', 174) + SHADE + FOLDS + ln(COLLAR, '#2f86d1', 5) + st('M24 169 H176', '#2f86d1'))
+    + sleeveS('#4dabf7', '#2f86d1') + heart(100, 148, 1.1, '#fff'),
+  pull: body(torso('#c77dff', 180) + ribs(126, 168, '#9d4edd', 7, .18)
+    + ln('M92 132 Q86 142 92 152 Q98 162 92 168', '#9d4edd', 3, .55) + ln('M108 132 Q114 142 108 152 Q102 162 108 168', '#9d4edd', 3, .55)
+    + '<rect x="20" y="168" width="160" height="12" fill="#9d4edd"/>' + ribs(168, 180, '#c77dff', 4) + SHADE + ln(COLLAR, '#9d4edd', 7))
+    + sleeveL('#c77dff', '#9d4edd', '<rect x="20" y="166" width="19" height="9" rx="2" transform="rotate(14 29 170)" fill="#9d4edd"/>'),
+  veste: body(mir('<path d="M20 108 L80 118 L94 186 H20Z" fill="#5b7db1"/><path d="M20 176 H92 L94 186 H20Z" fill="#3f5f94"/>')
+    + SHADE + mir(st('M83 122 L96 184', '#e0a84a') + st('M22 178 H91', '#e0a84a')
+    + '<path d="M54 140 H78 L77 151 Q66 155 55 151Z" fill="#3f5f94"/>' + st('M56 142 H76', '#e0a84a') + '<circle cx="66" cy="151" r="2" fill="#d4af37"/>')
+    + '<circle cx="111" cy="146" r="2.6" fill="#d4af37"/><circle cx="109" cy="160" r="2.6" fill="#d4af37"/><circle cx="107" cy="174" r="2.6" fill="#d4af37"/>')
+    + mir('<path d="M78 117 L95 146 L86 151 L72 123Z" fill="#3f5f94"/>' + st('M78 121 L91 145', '#e0a84a'))
+    + sleeveL('#5b7db1', '#3f5f94'),
+  robe: body(torso('#ff8fab', 170) + SHADE + ln(COLLAR, '#e05780', 3) + '<rect x="20" y="161" width="160" height="8" fill="#e05780"/>' + flower(76, 140) + flower(122, 150))
+    + '<path d="M60 168 H140 L166 204 Q100 216 34 204 Z" fill="#ff8fab"/>'
+    + pleats([72, 86, 100, 114, 128], 170, 208, 1.6)
+    + flower(64, 192) + flower(96, 184) + flower(130, 196) + flower(150, 186) + st('M38 203 Q100 213 162 203', '#fff')
+    + heart(100, 166, .45, '#c9184a') + sleeveS('#ff8fab', '#e05780'),
+  combinaison: body(torso('#2ec4b6', 240) + SHADE + FOLDS
+    + '<path d="M100 128 V184" stroke="#bbb" stroke-width="5" stroke-dasharray="1.2 1.8"/><rect x="97" y="127" width="6" height="8" rx="1.5" fill="#999"/>'
+    + '<rect x="20" y="160" width="160" height="7" fill="#1a9e92"/><rect x="93" y="158" width="14" height="11" rx="2" fill="none" stroke="#c9c9c9" stroke-width="2"/>'
+    + mir('<rect x="64" y="134" width="20" height="16" rx="2" fill="#1a9e92"/>' + st('M66 137 H82', '#9ff0e6')) + ln('M100 188 V214', '#1a9e92', 3) + ln('M78 196 Q82 200 78 204', '#000', 2, .12))
+    + mir('<path d="M68 117 L92 128 L80 137Z" fill="#1a9e92"/>') + sleeveS('#2ec4b6', '#1a9e92'),
+  pyjama: body(torso('#a0c4ff', 240)
+    + [[66,140],[132,136],[84,160],[118,176],[64,186],[138,196],[96,204],[150,160]].map(([x, y]) => `<path transform="translate(${x} ${y})" d="M0 -4 L1.2 -1.2 L4 0 L1.2 1.2 L0 4 L-1.2 1.2 L-4 0 L-1.2 -1.2Z" fill="#fff" opacity=".85"/>`).join('')
+    + SHADE + ln('M100 130 V182', '#fff', 2.5) + [140, 154, 168].map(y => `<circle cx="104" cy="${y}" r="2.6" fill="#fff" stroke="#6f95e0"/>`).join('')
+    + '<rect x="62" y="140" width="18" height="14" rx="2" fill="none" stroke="#fff" stroke-width="2"/>'
+    + '<rect x="20" y="182" width="160" height="5" fill="#6f95e0"/>' + ln('M100 188 V214', '#6f95e0', 2.5))
+    + mir('<path d="M64 117 L94 129 L80 141Z" fill="#a0c4ff" stroke="#fff" stroke-width="2" stroke-linejoin="round"/>')
+    + sleeveL('#a0c4ff', '#6f95e0', ln('M22 169 L38 173', '#fff', 4)),
+  // --- bas ---
+  pantalon: body('<rect x="20" y="166" width="160" height="62" fill="#355070"/>' + SHADE
+    + '<rect x="20" y="166" width="160" height="7" fill="#22385a"/>' + mir('<rect x="64" y="165" width="3.5" height="10" rx="1" fill="#2b4466"/>' + st('M56 175 Q68 184 82 175', '#d9a441'))
+    + '<circle cx="100" cy="170" r="2.4" fill="#d9a441"/>' + st('M105 175 V188 Q105 194 99 194', '#d9a441')
+    + ln('M100 194 V214', '#22385a', 2.5) + ln('M78 198 Q83 203 78 208', '#000', 2, .15) + ln('M122 198 Q117 203 122 208', '#000', 2, .15)),
+  jupe: '<path d="M54 164 H146 L160 198 Q100 208 40 198 Z" fill="#e5989b"/>'
+    + pleats([62, 74, 87, 100, 113, 126, 138], 168, 202, 1.3)
+    + ln('M52 178 H148', '#8e5572', 2, .45) + ln('M47 190 H153', '#8e5572', 2, .45)
+    + [72, 100, 128].map(x => ln(`M${x} 168 L${100 + (x - 100) * 1.3} 202`, '#fff', 1.5, .35)).join('')
+    + '<path d="M54 161 H146 V168 H54Z" fill="#b5838d"/>' + st('M43 197 Q100 206 157 197', '#fff'),
+  short: body('<rect x="20" y="166" width="160" height="30" fill="#f4a261"/>' + SHADE
+    + '<rect x="20" y="166" width="160" height="7" fill="#d9823b"/>' + '<circle cx="100" cy="170" r="2.2" fill="#8a4b14"/>'
+    + mir(st('M56 175 Q68 183 82 175', '#8a4b14')) + ln('M100 176 V196', '#d9823b', 2.5)
+    + '<rect x="20" y="189" width="160" height="7" fill="#d9823b"/>' + ln('M20 192 H180', '#f4a261', 1, .6)),
+  // --- chaussures ---
+  baskets: both(x => `<path d="M${x-18} 212 Q${x-17} 200 ${x-3} 199 Q${x+12} 199 ${x+18} 210 V213 H${x-18}Z" fill="#fafafa" stroke="#cfcfcf"/>`
+    + `<path d="M${x-19} 212 H${x+19} Q${x+19} 217 ${x+14} 217 H${x-14} Q${x-19} 217 ${x-19} 212Z" fill="#e9e9e9" stroke="#cfcfcf"/>`
+    + ln(`M${x-12} 209 Q${x} 203 ${x+12} 207`, '#ff6b8b', 2.5) + ln(`M${x-6} 203 L${x+3} 202 M${x-5} 206 L${x+5} 205`, '#999', 1.2)),
+  bottes: both(x => `<path d="M${x-13} 186 H${x+13} V205 Q${x+19} 206 ${x+19} 212 V214 H${x-19} V212 Q${x-19} 206 ${x-13} 205Z" fill="#8b5a2b"/>`
+    + `<rect x="${x-20}" y="213" width="40" height="4" rx="2" fill="#4a2f17"/><rect x="${x-14}" y="185" width="28" height="5" rx="2" fill="#6d4420"/>`
+    + ln(`M${x-8} 192 V204`, '#fff', 2, .18) + st(`M${x-17} 211 H${x+17}`, '#d9b38c')),
+  pluie: both(x => `<path d="M${x-13} 188 H${x+13} V205 Q${x+19} 206 ${x+19} 212 V214 H${x-19} V212 Q${x-19} 206 ${x-13} 205Z" fill="#ffd23f"/>`
+    + `<rect x="${x-20}" y="213" width="40" height="4" rx="2" fill="#c99700"/><rect x="${x-14}" y="187" width="28" height="4" rx="2" fill="#f5b700"/>`
+    + ln(`M${x-8} 193 V204`, '#fff', 2.5, .4)),
+  sandales: both(x => `<rect x="${x-19}" y="212" width="38" height="4" rx="2" fill="#a0522d"/>`
+    + ln(`M${x-14} 207 Q${x} 202 ${x+14} 207`, '#c2703d', 3.5) + ln(`M${x-16} 211 Q${x} 206 ${x+16} 211`, '#c2703d', 3)),
+  chaussons: both(x => `<ellipse cx="${x}" cy="211" rx="19" ry="8" fill="#ffc8dd"/>`
+    + [-14, -7, 0, 7, 14].map(dx => `<circle cx="${x + dx}" cy="${204 + Math.abs(dx) / 4}" r="4" fill="#ffe0ec"/>`).join('')
+    + `<circle cx="${x}" cy="201" r="4.5" fill="#fff"/><ellipse cx="${x}" cy="217" rx="17" ry="2" fill="#e8a3bd"/>`),
+  ballerines: both(x => `<path d="M${x-18} 213 Q${x-17} 205 ${x-6} 205 Q${x+8} 205 ${x+18} 211 V214 H${x-18}Z" fill="#e63946"/>`
+    + `<rect x="${x-19}" y="213" width="38" height="3" rx="1.5" fill="#9d0208"/>`
+    + `<path d="M${x-6} 205 l-4 -3 v6 Z M${x-6} 205 l4 -3 v6 Z" fill="#9d0208"/>` + ln(`M${x-12} 208 Q${x-2} 206 ${x+10} 209`, '#fff', 1.5, .35)),
 });
 const FULL = ['robe', 'combinaison', 'pyjama']; // tenues entières : pas de bas en plus
 
@@ -309,10 +367,13 @@ const ITEMS = [
   {id:'combinaison',slot:'top',name:'Combinaison',price:75},{id:'pyjama',slot:'top',name:'Pyjama',price:50},
   {id:'pantalon',slot:'bottom',name:'Pantalon',price:40},{id:'jupe',slot:'bottom',name:'Jupe',price:40},
   {id:'short',slot:'bottom',name:'Short',price:30},
+  {id:'baskets',slot:'feet',name:'Baskets',price:45},{id:'bottes',slot:'feet',name:'Bottes',price:60},
+  {id:'pluie',slot:'feet',name:'Bottes de pluie',price:40},{id:'sandales',slot:'feet',name:'Sandales',price:30},
+  {id:'chaussons',slot:'feet',name:'Chaussons',price:35},{id:'ballerines',slot:'feet',name:'Ballerines',price:50},
   {id:'banquise',slot:'bg',name:'Banquise',price:0},{id:'plage',slot:'bg',name:'Plage',price:70},
   {id:'nuit',slot:'bg',name:'Nuit étoilée',price:90},{id:'sunset',slot:'bg',name:'Coucher de soleil',price:90},
 ];
-const CATS = [['top','👕 Hauts & tenues'],['bottom','👖 Bas'],['head','🎩 Chapeaux'],['face','🕶️ Lunettes'],['neck','🧣 Cou'],['bg','🏝️ Décors']];
+const CATS = [['top','👕 Hauts & tenues'],['bottom','👖 Bas'],['feet','👟 Chaussures'],['head','🎩 Chapeaux'],['face','🕶️ Lunettes'],['neck','🧣 Cou'],['bg','🏝️ Décors']];
 
 function penguin(o = {}, mood = 'ok') {
   const cid = 'pc' + (penguin.n = (penguin.n || 0) + 1); // id unique par dessin
@@ -322,6 +383,7 @@ function penguin(o = {}, mood = 'ok') {
     sad:'<circle cx="84" cy="92" r="6" fill="#1b1b2f"/><circle cx="116" cy="92" r="6" fill="#1b1b2f"/><path d="M74 80 L90 84 M126 80 L110 84" stroke="#1b1b2f" stroke-width="3" stroke-linecap="round"/><path d="M120 100 q-4 8 0 10 q4 -2 0 -10Z" fill="#74c0fc"/>',
     sleep:'<g fill="none" stroke="#1b1b2f" stroke-width="3.5" stroke-linecap="round"><path d="M78 90 Q84 96 90 90"/><path d="M110 90 Q116 96 122 90"/></g><text x="146" y="52" font-size="20" fill="#8b7cf6" font-family="Fredoka">z</text><text x="160" y="36" font-size="14" fill="#8b7cf6" font-family="Fredoka">z</text>',
   }[mood];
+  const skirt = o.bottom === 'jupe' || o.top === 'robe'; // une jupe passe devant les chaussures, un pantalon derrière
   const clothes = ((FULL.includes(o.top) ? '' : ACC[o.bottom] || '') + (ACC[o.top] || '')).replaceAll('__C__', cid);
   return `<svg viewBox="0 0 200 230" xmlns="http://www.w3.org/2000/svg"><defs><clipPath id="${cid}"><ellipse cx="100" cy="132" rx="62" ry="80"/></clipPath></defs>${BG[o.bg] || BG.banquise}
   <ellipse cx="100" cy="216" rx="52" ry="8" fill="#000" opacity=".12"/>
@@ -334,8 +396,10 @@ function penguin(o = {}, mood = 'ok') {
     <circle cx="70" cy="104" r="7" fill="#ff8fab" opacity=".55"/><circle cx="130" cy="104" r="7" fill="#ff8fab" opacity=".55"/>
     ${eyes}
     <path d="M90 100 Q100 96 110 100 L100 113 Z" fill="#ff9f43"/>
-    ${clothes}
+    ${skirt ? '' : clothes}
     <ellipse cx="80" cy="211" rx="16" ry="7" fill="#ff9f43"/><ellipse cx="120" cy="211" rx="16" ry="7" fill="#ff9f43"/>
+    ${ACC[o.feet] || ''}
+    ${skirt ? clothes : ''}
     ${ACC[o.neck] || ''}${ACC[o.face] || ''}${ACC[o.head] || ''}
   </g></svg>`;
 }
