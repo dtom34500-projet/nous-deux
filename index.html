@@ -449,6 +449,37 @@ Object.assign(ACC, {
     + Array.from({length: 7}, (_, i) => ln(`M${94 + i * 2} 158 V${163 + (i % 2)}`, '#a98bbf', 1)).join(''),
 });
 
+// --- collection T&E (logo maison : cœur + T&E) ---
+const teMark = (x, y, k, c) => `<g transform="translate(${x} ${y}) scale(${k})"><path d="M0 9 C-20 -4 -12 -20 0 -10 C12 -20 20 -4 0 9Z" fill="none" stroke="${c}" stroke-width="1.6"/>`
+  + `<text x="0" y="1.5" text-anchor="middle" font-family="Georgia,serif" font-style="italic" font-weight="700" font-size="8" fill="${c}">T&amp;E</text></g>`;
+const teSwirl = (x, c) => ln(`M${x-10} 206 Q${x-2} 208.5 ${x+5} 202.5`, c, 2) + heart(x + 7, 202, .32, c); // la "virgule" des baskets T&E
+Object.assign(ACC, {
+  te_tee: body(top('#ffffff', 168) + SHADE + FOLDS + ln(COLLAR, '#e9e9e9', 5) + st('M40 163 H160', '#ddd')) + sleeveS('#ffffff', '#e9e9e9') + teMark(100, 140, 1.25, '#ff4d6d'),
+  te_hoodie: '<path d="M48 112 Q44 70 100 62 Q156 70 152 112 Q100 128 48 112Z" fill="#111"/>'
+    + body(top('#1c1c1c', 172) + SHADE + '<path d="M76 150 H124 L130 166 H70Z" fill="#fff" opacity=".05"/>' + st('M76 150 L70 166 M124 150 L130 166 M76 150 H124', '#444')
+      + '<rect x="30" y="164" width="140" height="8" fill="#111"/>' + ribs(164, 172, '#333', 4, .6)
+      + '<text x="100" y="140" text-anchor="middle" font-family="Georgia,serif" font-style="italic" font-weight="700" font-size="21" fill="#fff">T&amp;E</text>'
+      + '<text x="100" y="148" text-anchor="middle" font-family="Arial,sans-serif" font-weight="700" font-size="5.5" letter-spacing="1.5" fill="#ff8fab">TOM ♥ EMMA</text>')
+    + ln('M94 114 V130', '#ff8fab', 2) + ln('M106 114 V128', '#ff8fab', 2) + sleeveL('#1c1c1c', '#111') + arms(teMark(52, 146, .45, '#ff8fab')),
+  te_sweat: body(top('#ffc8dd', 172) + SHADE + FOLDS + '<rect x="30" y="164" width="140" height="8" fill="#f497b6"/>' + ribs(164, 172, '#ffc8dd', 4, .5))
+    + ln(COLLAR, '#f497b6', 5) + teMark(100, 136, 1.1, '#c9184a')
+    + '<text x="100" y="156" text-anchor="middle" font-family="Georgia,serif" font-style="italic" font-size="7" fill="#c9184a">since 2026</text>' + sleeveL('#ffc8dd', '#f497b6'),
+  te_doudoune: '<path d="M56 100 Q100 120 144 100 L146 114 Q100 134 54 114Z" fill="#f1f1f1"/>'
+    + body(top('#f1f1f1', 178) + [126, 142, 158].map(y => ln(`M30 ${y} H170`, '#cfcfcf', 2.5)).join('')
+      + [118, 134, 150, 166].map(y => `<ellipse cx="82" cy="${y}" rx="12" ry="3.5" fill="#fff" opacity=".8"/>`).join('')
+      + SHADE + ln('M100 120 V178', '#999', 1.8) + '<rect x="98" y="122" width="4" height="7" rx="1" fill="#888"/>')
+    + '<rect x="70" y="128" width="16" height="11" rx="2" fill="#111"/>' + teMark(78, 133.5, .45, '#fff')
+    + arms('<rect x="0" y="100" width="200" height="62" fill="#f1f1f1"/>' + ln('M0 124 H200 M0 142 H200', '#cfcfcf', 2.5) + '<rect x="0" y="155" width="200" height="7" fill="#ff8fab"/>'),
+  te_jogging: lower('<rect x="0" y="158" width="200" height="62" fill="#1c1c1c"/>' + SHADE + '<rect x="0" y="158" width="200" height="8" fill="#111"/>'
+      + ln('M78 172 V202 M122 172 V202', '#ff8fab', 2.5) + '<rect x="0" y="199" width="200" height="7" fill="#111"/>' + ribs(199, 206, '#333', 3, .6))
+    + ln('M97 164 Q95 172 93 176 M103 164 Q105 172 107 176', '#ff8fab', 1.5) + teMark(86, 180, .42, '#fff'),
+  te_cap: '<path d="M58 54 Q60 20 100 20 Q140 20 142 54Z" fill="#111"/><path d="M100 48 Q152 44 168 56 Q132 61 100 54Z" fill="#000"/>'
+    + '<circle cx="100" cy="21" r="4" fill="#ff8fab"/>' + st('M62 50 H140', '#555') + teMark(98, 36, .75, '#ff8fab'),
+  te_baskets: shoes(x => `<path d="M${x-13} 209 Q${x-12} 199 ${x-2} 198 Q${x+9} 198 ${x+13} 207 V210 H${x-13}Z" fill="#fff" stroke="#d8d8d8"/>`
+    + `<path d="M${x-14} 209 H${x+14} Q${x+14} 214 ${x+10} 214 H${x-10} Q${x-14} 214 ${x-14} 209Z" fill="#ffc8dd" stroke="#f497b6"/>`
+    + teSwirl(x, '#ff4d6d') + ln(`M${x-4} 200.5 L${x+3} 200`, '#bbb', 1.1)),
+});
+
 const FULL = ['robe', 'combinaison', 'pyjama', 'manteau', 'trench']; // tenues entières : pas de bas en plus
 
 const BG = {
@@ -485,10 +516,14 @@ const ITEMS = [
   {id:'rangers',slot:'feet',name:'Rangers',price:75},
   {id:'bob',slot:'head',name:'Bob',price:35},{id:'beret',slot:'head',name:'Béret',price:40},
   {id:'triangle',slot:'neck',name:'Écharpe triangle',price:35},
+  {id:'te_tee',slot:'top',name:'T-shirt T&E',price:40},{id:'te_hoodie',slot:'top',name:'Hoodie T&E',price:80},
+  {id:'te_sweat',slot:'top',name:'Sweat T&E',price:70},{id:'te_doudoune',slot:'top',name:'Doudoune T&E',price:150},
+  {id:'te_jogging',slot:'bottom',name:'Jogging T&E',price:60},{id:'te_cap',slot:'head',name:'Casquette T&E',price:45},
+  {id:'te_baskets',slot:'feet',name:'Baskets T&E',price:90},
   {id:'banquise',slot:'bg',name:'Banquise',price:0},{id:'plage',slot:'bg',name:'Plage',price:70},
   {id:'nuit',slot:'bg',name:'Nuit étoilée',price:90},{id:'sunset',slot:'bg',name:'Coucher de soleil',price:90},
 ];
-const CATS = [['top','👕 Hauts & tenues'],['bottom','👖 Bas'],['feet','👟 Chaussures'],['head','🎩 Chapeaux'],['face','🕶️ Lunettes'],['neck','🧣 Cou'],['bg','🏝️ Décors']];
+const CATS = [['te','💞 T&E'],['top','👕 Hauts & tenues'],['bottom','👖 Bas'],['feet','👟 Chaussures'],['head','🎩 Chapeaux'],['face','🕶️ Lunettes'],['neck','🧣 Cou'],['bg','🏝️ Décors']];
 
 function penguin(o = {}, mood = 'ok') {
   const cid = 'pc' + (penguin.n = (penguin.n || 0) + 1); // ids uniques par dessin
@@ -537,7 +572,7 @@ const ACTIONS = {
   play:{k:'fun',d:25,txt:'a joué avec',fx:'💗',full:'Il est déjà aux anges 🥰'},
   sleep:{k:'sleep',d:35,txt:'a couché',fx:'💤',full:"Il n'a pas sommeil 👀"},
 };
-let db = null, uid = null, pet, petLoaded = false, members = {}, membersLoaded = false, answers = [], busy = false, cat = 'top';
+let db = null, uid = null, pet, petLoaded = false, members = {}, membersLoaded = false, answers = [], busy = false, cat = 'te';
 let games = null, myG = null, gq = Promise.resolve(), info = null, bucket = [];
 
 function stats(p, now = Date.now()) {
@@ -650,7 +685,7 @@ function renderShop() {
   $('#cats').innerHTML = CATS.map(([c, l]) => `<button data-cat="${c}" class="${c === cat ? 'on' : ''}">${l}</button>`).join('');
   if (!pet) return;
   const owned = pet.owned || ['banquise'], o = pet.outfit || {};
-  $('#shop').innerHTML = ITEMS.filter(i => i.slot === cat).map(i => {
+  $('#shop').innerHTML = ITEMS.filter(i => cat === 'te' ? i.id.startsWith('te_') : i.slot === cat).map(i => {
     const has = owned.includes(i.id), worn = (o[i.slot] || (i.slot === 'bg' ? 'banquise' : null)) === i.id;
     const preview = i.slot === 'bg' ? {bg: i.id} : {[i.slot]: i.id};
     const btn = !has ? `<button class="main" data-buy="${i.id}" ${(pet.coins || 0) < i.price ? 'disabled' : ''}>Acheter 🪙 ${i.price}</button>`
